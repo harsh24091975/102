@@ -1,48 +1,32 @@
 import cv2
+import random
 import dropbox
 import time
-import random
-
 start_time = time.time()
-
-def take_snapshot():
-    number = random.randint(0,100)
-    #initializing cv2
-    videoCaptureObject = cv2.VideoCapture(0)
+def screenshot():
+    videoCaptureObject = cv2.VideoCapture()
     result = True
-    while(result):
-        #read the frames while the camera is on
-        ret,frame = videoCaptureObject.read()
-        #cv2.imwrite() method is used to save an image to any storage device
-        img_name = "img"+str(number)+".png"
-        cv2.imwrite(img_name, frame)
-        start_time = time.time
-        result = False
-    return img_name
-    print("snapshot taken")
-    # releases the camera
+    number = random.randint(1,1000)
+    while (result):
+        ret,frame=videoCaptureObject.read()
+        image_name = "img" + str(number) +".png"
+        cv2.imwrite(image_name,frame)
+        result=False
+    return image_name
+    print("Snapshot Taken")
     videoCaptureObject.release()
-    #closes all the window that might be opened while this process
     cv2.destroyAllWindows()
-
-
-
-def upload_file(img_name):
-    access_token = "riFu6Ybhc9AAAAAAAAAALaZlr0KQZp4W5yPr5fRlLudO7HyuxSz5BpczxsAwjvTN"
-    file =img_name
-    file_from = file
-    file_to="/testFolder/"+(img_name)
+def uploadFile(image):
+    file_from= image
+    file_to = "/securityFiles/"+image
+    access_token ="sl.Amw_q3oaY0wOXKolVIZLKwA2kCKYMstMMrsxhTNA29CK-ePILbN8_OQKdSlH3rHaC5eE9bZzZUj6Y3XWb_ZghTTSsSajEpen2fuGbT-rxN2cjRlzULJ_oGB1TP5Z0WONVm9aNTk"
     dbx = dropbox.Dropbox(access_token)
-
-    with open(file_from, 'rb') as f:
-        dbx.files_upload(f.read(), file_to,mode=dropbox.files.WriteMode.overwrite)
-        print("file uploaded")
-
-
+    with open(file_from,"rb") as file1:
+            dbx.files_upload(file1.read(),file_to,mode=dropbox.files.WriteMode.overwrite)
+    print("File Uploaded")
 def main():
-    while(True):
-        if ((time.time() - start_time) >= 5):
-            name = take_snapshot()
-            upload_file(name)
-
+    while (True):
+        if(time.time-start_time>=300):
+            name=screenshot()
+            uploadFile(name)
 main()
